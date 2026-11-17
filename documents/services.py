@@ -6,13 +6,13 @@ from docx.oxml.text.paragraph import CT_P
 from docx.oxml.table import CT_Tbl
 from docx.table import Table, _Cell
 from docx.text.paragraph import Paragraph
-import tiktoken
 
+from .chunking import split_text_into_chunks
+from .embedding_service import (
+    MODEL_NAME,
+    generate_passage_embeddings,
+)
 from .models import Document, DocumentChunk
-
-
-CHUNK_SIZE = 600
-CHUNK_OVERLAP = 80
 
 
 def iter_block_items(parent):
@@ -72,30 +72,6 @@ def extract_document_text(file):
     return full_text
 
 
-def split_text_into_chunks(text):
-    encoding = tiktoken.get_encoding("cl100k_base")
-    tokens = encoding.encode(text)
-
-    if not tokens:
-        return []
-
-    chunks = []
-    step = CHUNK_SIZE - CHUNK_OVERLAP
-
-    for start in range(0, len(tokens), step):
-        end = start + CHUNK_SIZE
-        chunk_tokens = tokens[start:end]
-        chunk_text = encoding.decode(chunk_tokens).strip()
-
-        if chunk_text:
-            chunks.append(chunk_text)
-
-        if end >= len(tokens):
-            break
-
-    return chunks
-
-
 def process_document(document):
     document.status = Document.Status.PROCESSING
     document.error_message = ""
@@ -123,6 +99,13 @@ def process_document(document):
                 "Document could not be divided into chunks."
             )
 
+        embeddings = generate_passage_embeddings(chunks)
+
+        if len(embeddings) != len(chunks):
+            raise ValueError(
+                "Embedding count does not match chunk count."
+            )
+
         with transaction.atomic():
             current_document = (
                 Document.objects
@@ -137,9 +120,11 @@ def process_document(document):
                     document=current_document,
                     content=chunk,
                     chunk_index=index,
+                    embedding=embeddings[index],
                     metadata={
                         "source_file": current_document.file.name,
                         "chunk_index": index,
+                        "embedding_model": MODEL_NAME,
                     },
                 )
                 for index, chunk in enumerate(chunks)
