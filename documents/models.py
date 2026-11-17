@@ -1,22 +1,37 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
 from pgvector.django import VectorField
+
+from .validators import validate_document_size
+
 
 class Document(models.Model):
     class Status(models.TextChoices):
-        PENDING = "pending", "در انتظار پردازش"
-        PROCESSING = "processing", "در حال پردازش"
-        COMPLETED = "completed", "پردازش شده"
-        FAILED = "failed", "ناموفق"
+        PENDING = "pending", "Pending"
+        PROCESSING = "processing", "Processing"
+        COMPLETED = "completed", "Completed"
+        FAILED = "failed", "Failed"
 
     title = models.CharField(max_length=255)
-    file = models.FileField(upload_to="documents/%Y/%m/%d/")
+
+    file = models.FileField(
+        upload_to="documents/%Y/%m/%d/",
+        validators=[
+            FileExtensionValidator(allowed_extensions=["docx"]),
+            validate_document_size,
+        ],
+    )
+
     full_text = models.TextField(blank=True)
+
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
-        default=Status.PENDING
+        default=Status.PENDING,
     )
+
     error_message = models.TextField(blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -31,16 +46,21 @@ class DocumentChunk(models.Model):
     document = models.ForeignKey(
         Document,
         on_delete=models.CASCADE,
-        related_name="chunks"
+        related_name="chunks",
     )
+
     content = models.TextField()
+
     chunk_index = models.PositiveIntegerField()
+
     embedding = VectorField(
         dimensions=384,
         null=True,
-        blank=True
+        blank=True,
     )
+
     metadata = models.JSONField(default=dict, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -48,7 +68,7 @@ class DocumentChunk(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["document", "chunk_index"],
-                name="unique_document_chunk_index"
+                name="unique_document_chunk_index",
             )
         ]
 
