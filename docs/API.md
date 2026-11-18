@@ -77,7 +77,7 @@ Returns `404 Not Found` if the document does not exist.
 
 **Content-Type:** `multipart/form-data`
 
-Replaces the document information.
+Updates the document information.
 
 The title is required. A replacement file can also be provided.
 
@@ -154,12 +154,36 @@ The response includes:
 - `used_llm`: Indicates whether the language model was called
 - `created_at`: Creation timestamp
 
-The status can be:
+The `status` field can have one of the following values:
 
 - `answered`
 - `no_answer`
 
-When relevant information is not found, the system returns the standard no-answer message and does not call the language model.
+### No-Answer Behavior
+
+The system handles insufficient information in two different situations:
+
+**1. No relevant chunks retrieved**
+
+If no document chunks meet the configured cosine-distance threshold, the system returns the predefined no-answer message without calling the language model.
+
+In this case:
+
+- `status` is `no_answer`.
+- `used_llm` is `false`.
+- The predefined no-answer message is returned.
+
+**2. Retrieved context is insufficient**
+
+If relevant chunks are retrieved but the language model determines that the provided context does not contain enough information to answer the question, the system returns the predefined no-answer message after calling the language model.
+
+In this case:
+
+- `status` is `no_answer`.
+- `used_llm` is `true`.
+- The predefined no-answer message is returned.
+
+Therefore, `used_llm` indicates whether the language model was actually called, not whether the final answer contains useful information.
 
 ## 3. Question History API
 
@@ -211,15 +235,16 @@ Returns `404 Not Found` if the record does not exist.
 | `204 No Content` | Resource deleted successfully |
 | `400 Bad Request` | Invalid request data |
 | `404 Not Found` | Requested resource does not exist |
-| `422 Unprocessable Entity` | Document processing failed |
 | `503 Service Unavailable` | Language model service is unavailable |
 
 ## 5. Important Notes
 
 - The current API does not require authentication.
 - Document uploads are limited to DOCX files.
+- The maximum accepted document size is 10 MB.
 - Document processing includes text extraction, chunking, and embedding generation.
 - Question answering uses retrieved document chunks as context.
 - Answers can include source identifiers to indicate the retrieved information.
-- The system avoids generating answers when relevant context is insufficient.
+- The system avoids generating unsupported answers when relevant context is insufficient.
 - The `status` returned by the question-answering API is calculated from the answer content and is not a separate database field.
+- The `used_llm` field indicates whether the language model was called during question processing.

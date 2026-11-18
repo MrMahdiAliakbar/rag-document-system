@@ -46,22 +46,25 @@ The application follows a modular Django architecture.
 2. The system validates its extension and file size.
 3. Text is extracted from paragraphs and tables.
 4. The extracted text is divided into chunks of up to 450 tokens, with a 60-token overlap.
-5. FastEmbed generates 384-dimensional multilingual embeddings using the `passage` prefix.
+5. FastEmbed generates 384-dimensional multilingual embeddings using the `passage:` prefix.
 6. Document chunks and their embeddings are stored in PostgreSQL using pgvector.
 7. The document status is updated to `completed` or `failed`.
 
 ### Question Answering
 
 1. A user submits a question through the REST API.
-2. The question is converted into an embedding using the `query` prefix.
+2. The question is converted into an embedding using the `query:` prefix.
 3. pgvector retrieves the most similar chunks from completed documents.
 4. Results are filtered using the configured cosine-distance threshold.
 5. Relevant passages are assembled into a context.
 6. LangChain sends the question and context to the configured OpenRouter model.
-7. The model generates an answer using only the retrieved context.
+7. The model generates an answer using the retrieved context.
 8. The answer and its source references are stored in question history and returned to the user.
 
-If no sufficiently relevant chunks are found, the system returns a predefined no-answer message without calling the LLM.
+The system handles insufficient information in two ways:
+
+- If no chunks meet the configured relevance threshold, the system returns a predefined no-answer message without calling the LLM. In this case, `used_llm` is `false`.
+- If relevant chunks are retrieved but the LLM determines that the provided context is insufficient to answer the question, the system returns the predefined no-answer message after calling the LLM. In this case, `used_llm` is `true`.
 
 ## Technology Stack
 
@@ -88,51 +91,39 @@ If no sufficiently relevant chunks are found, the system returns a predefined no
 rag-document-system/
 │
 ├── config/
-│   ├── settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
 ├── core/
-│   └── apps.py
-│
 ├── documents/
 │   ├── management/
 │   ├── migrations/
-│   ├── admin.py
-│   ├── chunking.py
-│   ├── embedding_service.py
-│   ├── models.py
-│   ├── search.py
-│   ├── serializers.py
-│   ├── services.py
-│   ├── tests.py
-│   ├── urls.py
-│   ├── validators.py
-│   └── views.py
+│   └── application files
 │
 ├── qa/
 │   ├── management/
 │   ├── migrations/
-│   ├── admin.py
-│   ├── llm_service.py
-│   ├── models.py
-│   ├── prompts.py
-│   ├── rag_service.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
+│   └── application files
+│
+├── docs/
+│   ├── API.md
+│   └── ARCHITECTURE.md
+│
+├── sample_documents/
+│   ├── generate_sample_document.py
+│   ├── sample_library_guide.fa.docx
+│   ├── sample_library_guide.en.docx
+│   └── sample_questions.md
 │
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
 ├── manage.py
+├── .env.example
 ├── .dockerignore
-└── .gitignore
+├── .gitignore
+├── README.md
+└── README.fa.md
 ```
 
-Uploaded documents, environment files, virtual environments, and generated cache files are runtime or local data and are not part of the source repository.
+Uploaded documents, the `.env` file, virtual environments, and generated cache files are runtime or local data and are not part of the source repository.
 
 ## Requirements
 
@@ -174,7 +165,11 @@ DB_PORT=5432
 
 OPENROUTER_API_KEY=your-openrouter-api-key
 OPENROUTER_MODEL=qwen/qwen3-32b:free
+```
 
+The following RAG settings are optional and use the defaults shown below when not provided:
+
+```env
 RAG_TOP_K=5
 RAG_MAX_COSINE_DISTANCE=0.20
 RAG_LLM_MAX_TOKENS=1024
@@ -260,6 +255,8 @@ Question history is ordered from newest to oldest. The list endpoint supports `p
 
 The question status returned by the API is derived from the answer content. It is not stored as a separate database field.
 
+For detailed request and response information, see [API Documentation](docs/API.md).
+
 ## API Documentation
 
 Interactive API documentation is available through:
@@ -269,6 +266,19 @@ Interactive API documentation is available through:
 | Swagger UI | `/api/docs/` |
 | ReDoc | `/api/redoc/` |
 | OpenAPI Schema | `/api/schema/` |
+
+Additional technical details are available in [Architecture Documentation](docs/ARCHITECTURE.md).
+
+## Sample Documents and Questions
+
+The `sample_documents/` directory contains:
+
+- A Persian DOCX sample document.
+- An English DOCX sample document.
+- A Python script used to generate the sample documents.
+- A collection of sample questions for testing the RAG pipeline.
+
+These resources can be used to upload sample content and evaluate document retrieval and question-answering behavior.
 
 ## Running Tests
 
@@ -282,22 +292,24 @@ The project completed 58 automated tests during the testing and verification pha
 
 ## Configuration
 
-| Variable | Description | Default |
+| Variable | Description | Default / Behavior |
 |---|---|---|
-| `DJANGO_SECRET_KEY` | Django secret key | Development fallback |
-| `DJANGO_DEBUG` | Debug mode | `True` |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1,0.0.0.0` |
-| `DB_NAME` | PostgreSQL database name | `rag_db` |
-| `DB_USER` | PostgreSQL username | `rag_user` |
-| `DB_PASSWORD` | PostgreSQL password | `rag_password` |
+| `DJANGO_SECRET_KEY` | Django secret key | Required; no fallback |
+| `DJANGO_DEBUG` | Debug mode | `False` in Django settings; `True` in the development `.env.example` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1` in Django settings |
+| `DB_NAME` | PostgreSQL database name | Required |
+| `DB_USER` | PostgreSQL username | Required |
+| `DB_PASSWORD` | PostgreSQL password | Required |
 | `DB_HOST` | Database host | `db` |
 | `DB_PORT` | Database port | `5432` |
-| `OPENROUTER_API_KEY` | OpenRouter API key | Empty |
+| `OPENROUTER_API_KEY` | OpenRouter API key | Empty; required for LLM requests |
 | `OPENROUTER_MODEL` | LLM model identifier | `qwen/qwen3-32b:free` |
 | `RAG_TOP_K` | Maximum retrieved chunks | `5` |
 | `RAG_MAX_COSINE_DISTANCE` | Maximum cosine distance | `0.20` |
 | `RAG_LLM_MAX_TOKENS` | Maximum generated tokens | `1024` |
 | `RAG_LLM_TIMEOUT` | LLM request timeout in milliseconds | `60000` |
+
+The `.env.example` file provides development-oriented values. In particular, it sets `DJANGO_DEBUG=True` and includes `0.0.0.0` in the allowed hosts for the Docker development setup. These are not production recommendations.
 
 ## Current Limitations and Security Notes
 
@@ -306,8 +318,9 @@ The project completed 58 automated tests during the testing and verification pha
 - The current API endpoints allow unauthenticated access.
 - The Docker configuration is intended for development and testing, not production deployment.
 - Django's development server is used in the current Docker setup.
-- The default Django settings are not production-ready. Configure a secure secret key, disable debug mode, and review allowed hosts before any public deployment.
-- The database port is published to the host in the current Compose configuration.
+- The database port is published only on the host loopback interface (`127.0.0.1:5432`), rather than on all network interfaces.
+- A valid `DJANGO_SECRET_KEY` and the required database environment variables must be provided before the application starts.
+- The default value of `DJANGO_DEBUG` in Django settings is `False`. The provided `.env.example` enables it for local development.
 - Answer quality depends on document content, retrieval relevance, and the configured language model.
 - Generating answers requires a valid OpenRouter API key and access to the selected model.
 
