@@ -1,19 +1,46 @@
+
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv(
-    "DJANGO_SECRET_KEY",
-    "temporary-development-key"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ImproperlyConfigured(
+        "DJANGO_SECRET_KEY must be set in the environment."
+    )
+
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv(
+        "DJANGO_ALLOWED_HOSTS",
+        "localhost,127.0.0.1"
+    ).split(",")
+    if host.strip()
+]
+
+required_database_variables = (
+    "DB_NAME",
+    "DB_USER",
+    "DB_PASSWORD",
 )
 
-DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
+missing_database_variables = [
+    variable
+    for variable in required_database_variables
+    if not os.getenv(variable)
+]
 
-ALLOWED_HOSTS = os.getenv(
-    "DJANGO_ALLOWED_HOSTS",
-    "localhost,127.0.0.1,0.0.0.0"
-).split(",")
+if missing_database_variables:
+    raise ImproperlyConfigured(
+        "Missing database environment variables: "
+        + ", ".join(missing_database_variables)
+    )
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -62,9 +89,9 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "rag_db"),
-        "USER": os.getenv("DB_USER", "rag_user"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "rag_password"),
+        "NAME": os.environ["DB_NAME"],
+        "USER": os.environ["DB_USER"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
         "HOST": os.getenv("DB_HOST", "db"),
         "PORT": os.getenv("DB_PORT", "5432"),
     }
@@ -127,7 +154,6 @@ REST_FRAMEWORK = {
         "drf_spectacular.openapi.AutoSchema"
     ),
 }
-
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "RAG Document System API",

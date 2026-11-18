@@ -129,7 +129,14 @@ class DocumentChunkAdmin(admin.ModelAdmin):
 
     search_fields = ("document__title", "content")
 
-    readonly_fields = ("embedding", "created_at")
+    readonly_fields = (
+        "document",
+        "chunk_index",
+        "content",
+        "embedding",
+        "metadata",
+        "created_at",
+    )
 
     fields = (
         "document",
@@ -139,3 +146,9 @@ class DocumentChunkAdmin(admin.ModelAdmin):
         "metadata",
         "created_at",
     )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
