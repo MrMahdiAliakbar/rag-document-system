@@ -1,4 +1,4 @@
-**🇬🇧 English** \| [🇮🇷 فارسی](README.fa.md)
+**English** | [فارسی](README.fa.md)
 
 # RAG Document System
 
@@ -8,23 +8,24 @@ The system allows users to upload DOCX documents, retrieve relevant information 
 
 ## 📑 Table of Contents
 
-- [Key Features](#-key-features)
-- [System Architecture](#-system-architecture)
-- [RAG Pipeline](#-rag-pipeline)
-- [Technology Stack](#-technology-stack)
-- [Project Structure](#-project-structure)
-- [Requirements](#-requirements)
-- [Getting Started](#-getting-started)
-- [API Endpoints](#-api-endpoints)
-- [API Documentation](#-api-documentation)
-- [Sample Documents and Questions](#-sample-documents-and-questions)
-- [Running Tests](#-running-tests)
-- [Configuration](#-configuration)
-- [Limitations and Security Notes](#-limitations-and-security-notes)
-- [License](#-license)
+- [Key Features](#readme-en-key-features)
+- [System Architecture](#readme-en-system-architecture)
+- [RAG Pipeline](#readme-en-rag-pipeline)
+- [Technology Stack](#readme-en-technology-stack)
+- [Project Structure](#readme-en-project-structure)
+- [Requirements](#readme-en-requirements)
+- [Getting Started](#readme-en-getting-started)
+- [API Endpoints](#readme-en-api-endpoints)
+- [API Documentation](#readme-en-api-documentation)
+- [Sample Documents and Questions](#readme-en-sample-documents)
+- [Running Tests](#readme-en-running-tests)
+- [Configuration](#readme-en-configuration)
+- [Limitations and Security Notes](#readme-en-limitations)
+- [License](#readme-en-license)
 
 ---
 
+<a name="readme-en-key-features"></a>
 ## ✨ Key Features
 
 - DOCX document upload and validation.
@@ -42,6 +43,7 @@ The system allows users to upload DOCX documents, retrieve relevant information 
 
 ---
 
+<a name="readme-en-system-architecture"></a>
 ## 🏗️ System Architecture
 
 The application follows a modular Django architecture.
@@ -60,6 +62,7 @@ The application follows a modular Django architecture.
 
 ---
 
+<a name="readme-en-rag-pipeline"></a>
 ## 🔄 RAG Pipeline
 
 ### Document Indexing
@@ -92,6 +95,7 @@ The system handles insufficient information in two ways:
 
 ---
 
+<a name="readme-en-technology-stack"></a>
 ## 🧰 Technology Stack
 
 | Component | Technology |
@@ -113,6 +117,7 @@ The system handles insufficient information in two ways:
 
 ---
 
+<a name="readme-en-project-structure"></a>
 ## 🗂️ Project Structure
 
 ```text
@@ -157,6 +162,7 @@ Uploaded documents, the `.env` file, virtual environments, and generated cache f
 
 ---
 
+<a name="readme-en-requirements"></a>
 ## 📋 Requirements
 
 - Docker
@@ -167,6 +173,7 @@ The provided Docker Compose configuration runs the Django application and Postgr
 
 ---
 
+<a name="readme-en-getting-started"></a>
 ## 🚀 Getting Started
 
 ### 1. Clone the Repository
@@ -261,6 +268,7 @@ These addresses are available only while the application is running locally.
 
 ---
 
+<a name="readme-en-api-endpoints"></a>
 ## 🔌 API Endpoints
 
 ### Document Management
@@ -300,6 +308,7 @@ For detailed request and response information, see the [API Documentation](docs/
 
 ---
 
+<a name="readme-en-api-documentation"></a>
 ## 📖 API Documentation
 
 The project provides automatically generated API documentation through `drf-spectacular`.
@@ -326,6 +335,7 @@ For internal components and technical details, see:
 
 ---
 
+<a name="readme-en-sample-documents"></a>
 ## 🧪 Sample Documents and Questions
 
 The `sample_documents/` directory contains:
@@ -339,6 +349,7 @@ These resources can be used to upload sample content and evaluate document retri
 
 ---
 
+<a name="readme-en-running-tests"></a>
 ## 🧫 Running Tests
 
 Run the automated test suite inside the web container:
@@ -351,6 +362,7 @@ The project completed 58 automated tests during the testing and verification pha
 
 ---
 
+<a name="readme-en-configuration"></a>
 ## ⚙️ Configuration
 
 | Variable | Description | Default / Behavior |
@@ -374,6 +386,7 @@ The `.env.example` file provides development-oriented values. In particular, it 
 
 ---
 
+<a name="readme-en-limitations"></a>
 ## 🔐 Limitations and Security Notes
 
 - Only DOCX documents are supported by the current upload workflow.
@@ -389,6 +402,7 @@ The `.env.example` file provides development-oriented values. In particular, it 
 
 ---
 
+<a name="readme-en-license"></a>
 ## 📄 License
 
 No license has been specified for this project yet.

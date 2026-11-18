@@ -1,4 +1,4 @@
-[🇬🇧 English](ARCHITECTURE.md) | **🇮🇷 فارسی**
+[English](ARCHITECTURE.md) | **فارسی**
 
 # 🏗️ معماری سیستم و مستندات فنی
 
@@ -6,22 +6,23 @@
 
 ## 📑 فهرست مطالب
 
-- [معرفی پروژه](#-معرفی-پروژه)
-- [فناوری‌های استفاده‌شده](#-فناوریهای-استفادهشده)
-- [معماری کلی سیستم](#-معماری-کلی-سیستم)
-- [فرایند پردازش اسناد](#-فرایند-پردازش-اسناد)
-- [روش تقسیم متن به بخش‌ها](#-روش-تقسیم-متن-به-بخشها)
-- [روش تولید Embedding](#-روش-تولید-embedding)
-- [جست‌وجوی برداری](#-جستوجوی-برداری)
-- [فرایند پرسش و پاسخ](#-فرایند-پرسش-و-پاسخ)
-- [تنظیمات بازیابی اطلاعات](#-تنظیمات-بازیابی-اطلاعات)
-- [طراحی پایگاه داده](#-طراحی-پایگاه-داده)
-- [مدیریت خطا و پایداری](#-مدیریت-خطا-و-پایداری)
-- [معماری API](#-معماری-api)
-- [معماری استقرار](#-معماری-استقرار)
+- [معرفی پروژه](#architecture-fa-overview)
+- [فناوری‌های استفاده‌شده](#architecture-fa-technology-stack)
+- [معماری کلی سیستم](#architecture-fa-high-level)
+- [فرایند پردازش اسناد](#architecture-fa-document-processing)
+- [روش تقسیم متن به بخش‌ها](#architecture-fa-chunking)
+- [روش تولید Embedding](#architecture-fa-embedding)
+- [جست‌وجوی برداری](#architecture-fa-vector-search)
+- [فرایند پرسش و پاسخ](#architecture-fa-question-answering)
+- [تنظیمات بازیابی اطلاعات](#architecture-fa-retrieval)
+- [طراحی پایگاه داده](#architecture-fa-database)
+- [مدیریت خطا و پایداری](#architecture-fa-error-handling)
+- [معماری API](#architecture-fa-api)
+- [معماری استقرار](#architecture-fa-deployment)
 
 ---
 
+<a id="architecture-fa-overview"></a>
 ## 📌 معرفی پروژه
 
 RAG Document System یک سامانه پرسش و پاسخ مبتنی بر اسناد است که با استفاده از معماری Retrieval-Augmented Generation یا به اختصار RAG پیاده‌سازی شده است.
@@ -34,6 +35,7 @@ RAG Document System یک سامانه پرسش و پاسخ مبتنی بر اس�
 
 ---
 
+<a id="architecture-fa-technology-stack"></a>
 ## 🧰 فناوری‌های استفاده‌شده
 
 | بخش | فناوری |
@@ -53,6 +55,7 @@ RAG Document System یک سامانه پرسش و پاسخ مبتنی بر اس�
 
 ---
 
+<a id="architecture-fa-high-level"></a>
 ## 🧩 معماری کلی سیستم
 
 برنامه از چند لایه اصلی تشکیل شده است که برای پردازش اسناد و پاسخ‌گویی به پرسش‌ها با یکدیگر همکاری می‌کنند.
@@ -99,6 +102,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-document-processing"></a>
 ## 📄 فرایند پردازش اسناد
 
 هنگامی که یک سند بارگذاری می‌شود، مراحل زیر انجام می‌شوند:
@@ -131,6 +135,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-chunking"></a>
 ## ✂️ روش تقسیم متن به بخش‌ها
 
 سیستم از روش تقسیم‌بندی مبتنی بر تعداد توکن استفاده می‌کند.
@@ -151,6 +156,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-embedding"></a>
 ## 🧠 روش تولید Embedding
 
 سیستم برای تبدیل متن به بردارهای عددی از مدل `intfloat/multilingual-e5-small` و کتابخانه FastEmbed استفاده می‌کند.
@@ -171,6 +177,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-vector-search"></a>
 ## 🔎 جست‌وجوی برداری
 
 در فرایند جست‌وجوی برداری، پرسش کاربر به یک Embedding تبدیل شده و با بردارهای ذخیره‌شده برای بخش‌های اسناد مقایسه می‌شود.
@@ -197,6 +204,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-question-answering"></a>
 ## 💬 فرایند پرسش و پاسخ
 
 هنگامی که کاربر پرسشی ارسال می‌کند، مراحل زیر انجام می‌شوند:
@@ -232,6 +240,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-retrieval"></a>
 ## ⚙️ تنظیمات بازیابی اطلاعات
 
 | تنظیم | مقدار پیش‌فرض |
@@ -246,6 +255,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-database"></a>
 ## 🗄️ طراحی پایگاه داده
 
 سیستم از سه مدل اصلی برای ذخیره اطلاعات استفاده می‌کند.
@@ -303,6 +313,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-error-handling"></a>
 ## 🛡️ مدیریت خطا و پایداری
 
 سیستم سناریوهای مختلف خطا را مدیریت می‌کند:
@@ -318,6 +329,7 @@ Django REST Framework درخواست‌های HTTP ورودی را مدیریت 
 
 ---
 
+<a id="architecture-fa-api"></a>
 ## 🔌 معماری API
 
 API در سه بخش اصلی سازمان‌دهی شده است.
@@ -337,6 +349,7 @@ API در سه بخش اصلی سازمان‌دهی شده است.
 
 ---
 
+<a id="architecture-fa-deployment"></a>
 ## 🐳 معماری استقرار
 
 پروژه برای اجرای سرویس‌های خود از Docker Compose استفاده می‌کند.

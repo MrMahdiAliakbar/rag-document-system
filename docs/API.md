@@ -1,4 +1,4 @@
-**🇬🇧 English** \| [🇮🇷 فارسی](API.fa.md)
+**English** | [فارسی](API.fa.md)
 
 # 🔌 API Documentation
 
@@ -6,19 +6,20 @@ This document describes the REST API endpoints of the RAG Document System, inclu
 
 ## 📑 Table of Contents
 
-- [Overview](#-overview)
-- [API Endpoints](#-api-endpoints)
+- [Overview](#api-en-overview)
+- [API Endpoints](#api-en-endpoints)
   - [Documents](#documents)
   - [Question Answering](#question-answering)
   - [Question History](#question-history)
-- [Request and Response Examples](#-request-and-response-examples)
-- [Validation Rules](#-validation-rules)
-- [HTTP Status Codes](#-http-status-codes)
-- [Interactive API Documentation](#-interactive-api-documentation)
-- [Authentication](#-authentication)
+- [Request and Response Examples](#api-en-examples)
+- [Validation Rules](#api-en-validation)
+- [HTTP Status Codes](#api-en-status-codes)
+- [Interactive API Documentation](#api-en-interactive-docs)
+- [Authentication](#api-en-authentication)
 
 ---
 
+<a id="api-en-overview"></a>
 ## 🌐 Overview
 
 The API is built with Django REST Framework and provides endpoints for document management, question answering, and question history.
@@ -36,6 +37,7 @@ http://localhost:8000/api/
 
 ---
 
+<a id="api-en-endpoints"></a>
 ## 📡 API Endpoints
 
 ### Documents
@@ -118,6 +120,7 @@ The list response contains a summary of each record. The detail endpoint also in
 
 ---
 
+<a id="api-en-examples"></a>
 ## 🧾 Request and Response Examples
 
 ### Document Upload
@@ -229,6 +232,7 @@ The history detail endpoint includes the `sources` field in addition to the fiel
 
 ---
 
+<a id="api-en-validation"></a>
 ## ✅ Validation Rules
 
 ### Document Upload and Update
@@ -248,6 +252,7 @@ The history detail endpoint includes the `sources` field in addition to the fiel
 
 ---
 
+<a id="api-en-status-codes"></a>
 ## ⚠️ HTTP Status Codes
 
 | Status Code | Meaning | Common Usage |
@@ -264,6 +269,7 @@ The exact response depends on the endpoint and the type of error.
 
 ---
 
+<a id="api-en-interactive-docs"></a>
 ## 📚 Interactive API Documentation
 
 The project provides three API documentation interfaces:
@@ -282,6 +288,7 @@ Open the following URLs after starting the application:
 
 ---
 
+<a id="api-en-authentication"></a>
 ## 🔐 Authentication
 
 The current project does not implement API authentication or user authorization. The API endpoints are publicly accessible in the development configuration.

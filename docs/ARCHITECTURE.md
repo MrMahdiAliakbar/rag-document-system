@@ -1,4 +1,4 @@
-**🇬🇧 English** | [🇮🇷 فارسی](ARCHITECTURE.fa.md)
+**English** | [فارسی](ARCHITECTURE.fa.md)
 
 # 🏗️ System Architecture & Technical Documentation
 
@@ -6,22 +6,23 @@ This document explains the architecture, internal components, data flow, process
 
 ## 📑 Table of Contents
 
-- [Project Overview](#-project-overview)
-- [Technology Stack](#-technology-stack)
-- [High-Level Architecture](#-high-level-architecture)
-- [Document Processing Workflow](#-document-processing-workflow)
-- [Text Chunking Strategy](#-text-chunking-strategy)
-- [Embedding Strategy](#-embedding-strategy)
-- [Vector Search](#-vector-search)
-- [Question Answering Workflow](#-question-answering-workflow)
-- [Retrieval Configuration](#-retrieval-configuration)
-- [Database Design](#-database-design)
-- [Error Handling and Reliability](#-error-handling-and-reliability)
-- [API Architecture](#-api-architecture)
-- [Deployment Architecture](#-deployment-architecture)
+- [Project Overview](#architecture-en-overview)
+- [Technology Stack](#architecture-en-technology-stack)
+- [High-Level Architecture](#architecture-en-high-level)
+- [Document Processing Workflow](#architecture-en-document-processing)
+- [Text Chunking Strategy](#architecture-en-chunking)
+- [Embedding Strategy](#architecture-en-embedding)
+- [Vector Search](#architecture-en-vector-search)
+- [Question Answering Workflow](#architecture-en-question-answering)
+- [Retrieval Configuration](#architecture-en-retrieval)
+- [Database Design](#architecture-en-database)
+- [Error Handling and Reliability](#architecture-en-error-handling)
+- [API Architecture](#architecture-en-api)
+- [Deployment Architecture](#architecture-en-deployment)
 
 ---
 
+<a id="architecture-en-overview"></a>
 ## 📌 Project Overview
 
 RAG Document System is a document-based question-answering application built using Retrieval-Augmented Generation (RAG).
@@ -34,6 +35,7 @@ The main objective is to provide answers grounded in the uploaded documents rath
 
 ---
 
+<a id="architecture-en-technology-stack"></a>
 ## 🧰 Technology Stack
 
 | Component | Technology |
@@ -53,6 +55,7 @@ The main objective is to provide answers grounded in the uploaded documents rath
 
 ---
 
+<a id="architecture-en-high-level"></a>
 ## 🧩 High-Level Architecture
 
 The application consists of several layers that work together to process documents and answer questions.
@@ -99,6 +102,7 @@ The model receives the user's question and retrieved document context and genera
 
 ---
 
+<a id="architecture-en-document-processing"></a>
 ## 📄 Document Processing Workflow
 
 When a document is uploaded, the following steps take place:
@@ -121,6 +125,7 @@ When an existing document is updated with a replacement file, the previous docum
 
 ---
 
+<a id="architecture-en-chunking"></a>
 ## ✂️ Text Chunking Strategy
 
 The system uses a token-based chunking strategy.
@@ -141,6 +146,7 @@ The overlap preserves some context between neighboring chunks and reduces the ri
 
 ---
 
+<a id="architecture-en-embedding"></a>
 ## 🧠 Embedding Strategy
 
 The system uses the `intfloat/multilingual-e5-small` embedding model through FastEmbed.
@@ -161,6 +167,7 @@ The model uses different prefixes for document passages and search queries to su
 
 ---
 
+<a id="architecture-en-vector-search"></a>
 ## 🔎 Vector Search
 
 The vector search process converts a user's question into an embedding and compares it with the stored document chunk embeddings.
@@ -181,6 +188,7 @@ A lower cosine distance indicates greater similarity.
 
 ---
 
+<a id="architecture-en-question-answering"></a>
 ## 💬 Question Answering Workflow
 
 When a user submits a question:
@@ -205,6 +213,7 @@ The system therefore has two possible no-answer scenarios:
 
 ---
 
+<a id="architecture-en-retrieval"></a>
 ## ⚙️ Retrieval Configuration
 
 | Setting | Default Value |
@@ -219,6 +228,7 @@ The similarity threshold prevents unrelated document chunks from being passed to
 
 ---
 
+<a id="architecture-en-database"></a>
 ## 🗄️ Database Design
 
 The system uses three main data models.
@@ -276,6 +286,7 @@ The `answered` or `no_answer` status returned by the API is calculated from the 
 
 ---
 
+<a id="architecture-en-error-handling"></a>
 ## 🛡️ Error Handling and Reliability
 
 The system handles several failure scenarios:
@@ -291,6 +302,7 @@ The system handles several failure scenarios:
 
 ---
 
+<a id="architecture-en-api"></a>
 ## 🔌 API Architecture
 
 The API is organized around three main functional areas.
@@ -310,6 +322,7 @@ The document endpoints support document management, while the question-answering
 
 ---
 
+<a id="architecture-en-deployment"></a>
 ## 🐳 Deployment Architecture
 
 The project uses Docker Compose to run its application services.

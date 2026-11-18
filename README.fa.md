@@ -1,4 +1,4 @@
-[🇬🇧 English](README.md) \| **🇮🇷 فارسی**
+[English](README.md) | **فارسی**
 
 # سامانه پرسش و پاسخ مبتنی بر اسناد (RAG)
 
@@ -8,23 +8,24 @@
 
 ## 📑 فهرست مطالب
 
-- [قابلیت‌های اصلی](#-قابلیتهای-اصلی)
-- [معماری سیستم](#-معماری-سیستم)
-- [مراحل پردازش RAG](#-مراحل-پردازش-rag)
-- [فناوری‌های استفاده‌شده](#-فناوریهای-استفادهشده)
-- [ساختار پروژه](#-ساختار-پروژه)
-- [پیش‌نیازها](#-پیشنیازها)
-- [شروع به کار](#-شروع-به-کار)
-- [مسیرهای API](#-مسیرهای-api)
-- [مستندات API](#-مستندات-api)
-- [اسناد و پرسش‌های نمونه](#-اسناد-و-پرسشهای-نمونه)
-- [اجرای تست‌ها](#-اجرای-تستها)
-- [تنظیمات پروژه](#-تنظیمات-پروژه)
-- [محدودیت‌ها و نکات امنیتی](#-محدودیتها-و-نکات-امنیتی)
-- [مجوز](#-مجوز)
+- [قابلیت‌های اصلی](#readme-fa-key-features)
+- [معماری سیستم](#readme-fa-system-architecture)
+- [مراحل پردازش RAG](#readme-fa-rag-pipeline)
+- [فناوری‌های استفاده‌شده](#readme-fa-technology-stack)
+- [ساختار پروژه](#readme-fa-project-structure)
+- [پیش‌نیازها](#readme-fa-requirements)
+- [شروع به کار](#readme-fa-getting-started)
+- [مسیرهای API](#readme-fa-api-endpoints)
+- [مستندات API](#readme-fa-api-documentation)
+- [اسناد و پرسش‌های نمونه](#readme-fa-sample-documents)
+- [اجرای تست‌ها](#readme-fa-running-tests)
+- [تنظیمات پروژه](#readme-fa-configuration)
+- [محدودیت‌ها و نکات امنیتی](#readme-fa-limitations)
+- [مجوز](#readme-fa-license)
 
 ---
 
+<a name="readme-fa-key-features"></a>
 ## ✨ قابلیت‌های اصلی
 
 - بارگذاری و اعتبارسنجی اسناد DOCX
@@ -42,6 +43,7 @@
 
 ---
 
+<a name="readme-fa-system-architecture"></a>
 ## 🏗️ معماری سیستم
 
 این برنامه از یک معماری ماژولار مبتنی بر Django استفاده می‌کند.
@@ -60,6 +62,7 @@
 
 ---
 
+<a name="readme-fa-rag-pipeline"></a>
 ## 🔄 مراحل پردازش RAG
 
 ### پردازش و نمایه‌سازی سند
@@ -105,6 +108,7 @@
 
 ---
 
+<a name="readme-fa-technology-stack"></a>
 ## 🧰 فناوری‌های استفاده‌شده
 
 | بخش | فناوری |
@@ -126,6 +130,7 @@
 
 ---
 
+<a name="readme-fa-project-structure"></a>
 ## 🗂️ ساختار پروژه
 
 ```text
@@ -170,6 +175,7 @@ rag-document-system/
 
 ---
 
+<a name="readme-fa-requirements"></a>
 ## 📋 پیش‌نیازها
 
 برای اجرای پروژه به موارد زیر نیاز دارید:
@@ -182,6 +188,7 @@ rag-document-system/
 
 ---
 
+<a name="readme-fa-getting-started"></a>
 ## 🚀 شروع به کار
 
 ### ۱. دریافت مخزن پروژه
@@ -276,6 +283,7 @@ docker compose exec web python manage.py createsuperuser
 
 ---
 
+<a name="readme-fa-api-endpoints"></a>
 ## 🔌 مسیرهای API
 
 ### مدیریت اسناد
@@ -315,6 +323,7 @@ docker compose exec web python manage.py createsuperuser
 
 ---
 
+<a name="readme-fa-api-documentation"></a>
 ## 📖 مستندات API
 
 مستندات API با استفاده از `drf-spectacular` به‌صورت خودکار تولید می‌شوند.
@@ -341,6 +350,7 @@ docker compose exec web python manage.py createsuperuser
 
 ---
 
+<a name="readme-fa-sample-documents"></a>
 ## 🧪 اسناد و پرسش‌های نمونه
 
 پوشه `sample_documents/` شامل موارد زیر است:
@@ -354,6 +364,7 @@ docker compose exec web python manage.py createsuperuser
 
 ---
 
+<a name="readme-fa-running-tests"></a>
 ## 🧫 اجرای تست‌ها
 
 برای اجرای مجموعه تست‌های خودکار در کانتینر برنامه:
@@ -366,6 +377,7 @@ docker compose exec web python manage.py test
 
 ---
 
+<a name="readme-fa-configuration"></a>
 ## ⚙️ تنظیمات پروژه
 
 | متغیر | توضیحات | مقدار پیش‌فرض / رفتار |
@@ -389,6 +401,7 @@ docker compose exec web python manage.py test
 
 ---
 
+<a name="readme-fa-limitations"></a>
 ## 🔐 محدودیت‌ها و نکات امنیتی
 
 - فرایند فعلی بارگذاری اسناد فقط از فایل‌های DOCX پشتیبانی می‌کند.
@@ -404,6 +417,7 @@ docker compose exec web python manage.py test
 
 ---
 
+<a name="readme-fa-license"></a>
 ## 📄 مجوز
 
 در حال حاضر مجوز مشخصی برای این پروژه تعیین نشده است.
