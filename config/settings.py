@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "drf_spectacular",
     "documents",
     "qa",
     "core",
@@ -120,3 +121,18 @@ RAG_LLM_MAX_TOKENS = int(
 RAG_LLM_TIMEOUT = int(
     os.getenv("RAG_LLM_TIMEOUT", "60000")
 )
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": (
+        "drf_spectacular.openapi.AutoSchema"
+    ),
+}
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "RAG Document System API",
+    "DESCRIPTION": "REST API for document management, RAG-based question answering, and question history.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+}
