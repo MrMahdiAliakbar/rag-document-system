@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 
@@ -97,3 +96,27 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+OPENROUTER_API_KEY = os.getenv(
+    "OPENROUTER_API_KEY",
+    ""
+).strip()
+
+OPENROUTER_MODEL = os.getenv(
+    "OPENROUTER_MODEL",
+    "qwen/qwen3-32b:free"
+).strip()
+
+RAG_TOP_K = int(os.getenv("RAG_TOP_K", "5"))
+
+RAG_MAX_COSINE_DISTANCE = float(
+    os.getenv("RAG_MAX_COSINE_DISTANCE", "0.20")
+)
+
+RAG_LLM_MAX_TOKENS = int(
+    os.getenv("RAG_LLM_MAX_TOKENS", "1024")
+)
+
+RAG_LLM_TIMEOUT = int(
+    os.getenv("RAG_LLM_TIMEOUT", "60000")
+)

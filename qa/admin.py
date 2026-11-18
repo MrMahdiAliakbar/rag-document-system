@@ -23,10 +23,10 @@ class QuestionAnswerAdmin(admin.ModelAdmin):
         "created_at",
     )
 
-    @admin.display(description="سؤال")
+    @admin.display(description="Question")
     def question_preview(self, obj):
         return obj.question[:80]
 
-    @admin.display(description="تعداد منابع")
+    @admin.display(description="Source Count")
     def source_count(self, obj):
-        return len(obj.sources)
+        return len(obj.sources or [])
