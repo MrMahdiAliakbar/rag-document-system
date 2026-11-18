@@ -45,6 +45,15 @@ class DocumentUploadSerializer(serializers.ModelSerializer):
         return value
 
 
+class DocumentUpdateSerializer(DocumentUploadSerializer):
+    file = serializers.FileField(required=False)
+
+    class Meta(DocumentUploadSerializer.Meta):
+        extra_kwargs = {
+            "file": {"required": False},
+        }
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     chunk_count = serializers.IntegerField(read_only=True)
     file_name = serializers.SerializerMethodField()
