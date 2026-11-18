@@ -1,132 +1,151 @@
+**🇬🇧 English** \| [🇮🇷 فارسی](API.fa.md)
 
-# API Documentation
+# 🔌 API Documentation
 
-## Base URL
+This document describes the REST API endpoints of the RAG Document System, including request formats, response structures, validation rules, and error handling.
+
+## 📑 Table of Contents
+
+- [Overview](#-overview)
+- [API Endpoints](#-api-endpoints)
+  - [Documents](#documents)
+  - [Question Answering](#question-answering)
+  - [Question History](#question-history)
+- [Request and Response Examples](#-request-and-response-examples)
+- [Validation Rules](#-validation-rules)
+- [HTTP Status Codes](#-http-status-codes)
+- [Interactive API Documentation](#-interactive-api-documentation)
+- [Authentication](#-authentication)
+
+---
+
+## 🌐 Overview
+
+The API is built with Django REST Framework and provides endpoints for document management, question answering, and question history.
+
+**Base URL:**
 
 ```text
-http://localhost:8000
+http://localhost:8000/api/
 ```
 
-All API endpoints use the `/api/` prefix.
+**Supported content types:**
 
-## Interactive API Documentation
+- `application/json` for JSON requests.
+- `multipart/form-data` for document uploads and file replacement.
 
-The project provides interactive API documentation through the following endpoints:
+---
 
-| Documentation | Endpoint |
-|---|---|
-| Swagger UI | `/api/docs/` |
-| ReDoc | `/api/redoc/` |
-| OpenAPI Schema | `/api/schema/` |
+## 📡 API Endpoints
 
-## 1. Document Management API
+### Documents
 
-Base path: `/api/documents/`
+Documents are uploaded as DOCX files, processed, divided into chunks, and stored for retrieval.
 
-### 1.1 List Documents
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/documents/` | Retrieve all documents |
+| POST | `/api/documents/` | Upload a new document |
+| GET | `/api/documents/{id}/` | Retrieve a specific document |
+| PUT | `/api/documents/{id}/` | Update a document |
+| PATCH | `/api/documents/{id}/` | Partially update a document |
+| DELETE | `/api/documents/{id}/` | Delete a document |
 
-**Endpoint:**
-
-`GET /api/documents/`
-
-Returns a list of uploaded documents, ordered from newest to oldest.
-
-**Successful response:** `200 OK`
-
-### 1.2 Upload a Document
-
-**Endpoint:**
+**Upload a document**
 
 `POST /api/documents/`
 
-**Content-Type:** `multipart/form-data`
+Request content type: `multipart/form-data`
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `title` | string | Yes | Document title |
-| `file` | file | Yes | DOCX document |
+| `title` | String | Yes | Document title |
+| `file` | File | Yes | DOCX document |
 
-**Validation rules:**
-
-- Only DOCX files are accepted.
-- Empty files are rejected.
-- The document title cannot be empty.
-- The maximum file size is 10 MB.
-
-**Successful response:** `201 Created`
-
-The response includes the created document information and its processing status.
-
-### 1.3 Retrieve a Document
-
-**Endpoint:**
-
-`GET /api/documents/{id}/`
-
-Returns the information of a specific document.
-
-**Successful response:** `200 OK`
-
-Returns `404 Not Found` if the document does not exist.
-
-### 1.4 Update a Document
-
-**Endpoint:**
+**Update a document**
 
 `PUT /api/documents/{id}/`
 
-**Content-Type:** `multipart/form-data`
-
-Updates the document information.
-
-The title is required. A replacement file can also be provided.
-
-When a new file is uploaded, the document is processed again.
-
-**Successful response:** `200 OK`
-
-### 1.5 Partially Update a Document
-
-**Endpoint:**
+A PUT request updates a document using the supplied fields. The `title` field is required for a full update. A replacement file is optional.
 
 `PATCH /api/documents/{id}/`
 
-**Content-Type:** `multipart/form-data`
+A PATCH request partially updates a document. Only the supplied fields are changed.
 
-Updates only the provided fields.
+If a replacement file is uploaded, the document is processed again. If processing fails, the API returns `422 Unprocessable Entity` and restores the previous document state.
 
-Available fields:
+### Question Answering
 
-- `title`
-- `file`
+The question-answering endpoint uses the RAG pipeline to retrieve relevant document chunks and generate an answer.
 
-Changing only the title does not require document reprocessing.
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/qa/ask/` | Submit a question and receive an answer |
 
-**Successful response:** `200 OK`
-
-### 1.6 Delete a Document
-
-**Endpoint:**
-
-`DELETE /api/documents/{id}/`
-
-Deletes the selected document and its associated data.
-
-**Successful response:** `204 No Content`
-
-## 2. Question Answering API
-
-Base path: `/api/qa/`
-
-### 2.1 Ask a Question
-
-**Endpoint:**
+**Request body**
 
 `POST /api/qa/ask/`
 
-**Content-Type:** `application/json`
+Content type: `application/json`
 
-**Request body:**
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `question` | String | Yes | User's question |
+| `document_id` | Integer | No | Restrict retrieval to a specific document |
+
+If `document_id` is omitted, retrieval can use the available documents.
+
+The response includes the generated answer, retrieval sources, answer status, and information about whether the LLM was used.
+
+### Question History
+
+The question history endpoints allow users to retrieve previously submitted questions and their answers.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/qa/history/` | Retrieve question history |
+| GET | `/api/qa/history/{id}/` | Retrieve a specific history record |
+
+The history list uses page-number pagination. The default page size is 20 records. The `page_size` query parameter can be used to request a different page size, up to a maximum of 100.
+
+Example:
+
+```text
+GET /api/qa/history/?page=2&page_size=10
+```
+
+The list response contains a summary of each record. The detail endpoint also includes the associated retrieval sources.
+
+---
+
+## 🧾 Request and Response Examples
+
+### Document Upload
+
+Example request fields:
+
+```text
+title: Library Guide
+file: library_guide.docx
+```
+
+Example document response:
+
+```json
+{
+  "id": 1,
+  "title": "Library Guide",
+  "file_name": "library_guide.docx",
+  "status": "completed",
+  "chunk_count": 3,
+  "created_at": "2026-11-18T10:30:00Z",
+  "updated_at": "2026-11-18T10:30:00Z"
+}
+```
+
+### Ask a Question
+
+Example request:
 
 ```json
 {
@@ -135,116 +154,136 @@ Base path: `/api/qa/`
 }
 ```
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `question` | string | Yes | User question |
-| `document_id` | integer | No | Optional document ID to restrict retrieval |
+Example response:
 
-If `document_id` is omitted, the system searches across all completed documents.
+```json
+{
+  "id": 12,
+  "question": "How many books can an undergraduate student borrow?",
+  "answer": "An undergraduate student can borrow ...",
+  "status": "answered",
+  "sources": [
+    {
+      "source_id": "S1",
+      "document_id": 1,
+      "document_title": "Library Guide",
+      "chunk_index": 0,
+      "similarity": 0.91,
+      "distance": 0.09,
+      "content": "..."
+    }
+  ],
+  "used_llm": true,
+  "created_at": "2026-11-18T10:30:00Z"
+}
+```
 
-**Successful response:** `200 OK`
+The values above are illustrative examples. Actual answers and source contents depend on the uploaded documents and the question.
 
-The response includes:
+**Response fields**
 
-- `id`: Question history record ID
-- `question`: Submitted question
-- `answer`: Generated answer
-- `status`: Answer status
-- `sources`: Retrieved document chunks
-- `used_llm`: Indicates whether the language model was called
-- `created_at`: Creation timestamp
-
-The `status` field can have one of the following values:
-
-- `answered`
-- `no_answer`
-
-### No-Answer Behavior
-
-The system handles insufficient information in two different situations:
-
-**1. No relevant chunks retrieved**
-
-If no document chunks meet the configured cosine-distance threshold, the system returns the predefined no-answer message without calling the language model.
-
-In this case:
-
-- `status` is `no_answer`.
-- `used_llm` is `false`.
-- The predefined no-answer message is returned.
-
-**2. Retrieved context is insufficient**
-
-If relevant chunks are retrieved but the language model determines that the provided context does not contain enough information to answer the question, the system returns the predefined no-answer message after calling the language model.
-
-In this case:
-
-- `status` is `no_answer`.
-- `used_llm` is `true`.
-- The predefined no-answer message is returned.
-
-Therefore, `used_llm` indicates whether the language model was actually called, not whether the final answer contains useful information.
-
-## 3. Question History API
-
-### 3.1 List Question History
-
-**Endpoint:**
-
-`GET /api/qa/history/`
-
-Returns previous questions and their answers, ordered from newest to oldest.
-
-**Successful response:** `200 OK`
-
-The endpoint supports page-number pagination.
-
-| Parameter | Description |
+| Field | Description |
 |---|---|
-| `page` | Page number |
-| `page_size` | Number of records per page |
+| `id` | Question-answer record ID |
+| `question` | Submitted question |
+| `answer` | Generated answer or predefined no-answer response |
+| `status` | `answered` or `no_answer` |
+| `sources` | Retrieved document chunks used as context |
+| `used_llm` | Indicates whether the LLM was called |
+| `created_at` | Record creation timestamp |
 
-Default page size: `20`
+Each object in `sources` contains:
 
-Maximum page size: `100`
-
-**Example:**
-
-`GET /api/qa/history/?page=1&page_size=10`
-
-The list response includes the question, answer, status, and creation timestamp.
-
-### 3.2 Retrieve a History Record
-
-**Endpoint:**
-
-`GET /api/qa/history/{id}/`
-
-Returns the details of a specific question-answer record, including its source information.
-
-**Successful response:** `200 OK`
-
-Returns `404 Not Found` if the record does not exist.
-
-## 4. Common HTTP Status Codes
-
-| Status Code | Description |
+| Field | Description |
 |---|---|
-| `200 OK` | Request completed successfully |
-| `201 Created` | Resource created successfully |
-| `204 No Content` | Resource deleted successfully |
-| `400 Bad Request` | Invalid request data |
-| `404 Not Found` | Requested resource does not exist |
-| `503 Service Unavailable` | Language model service is unavailable |
+| `source_id` | Source reference such as `S1` |
+| `document_id` | ID of the source document |
+| `document_title` | Title of the source document |
+| `chunk_index` | Index of the retrieved chunk |
+| `similarity` | Similarity score |
+| `distance` | Cosine distance |
+| `content` | Retrieved chunk content |
 
-## 5. Important Notes
+### Question History
 
-- The current API does not require authentication.
-- Document uploads are limited to DOCX files.
-- The maximum accepted document size is 10 MB.
-- Document processing includes text extraction, chunking, and embedding generation.
-- Question answering uses retrieved document chunks as context.
-- Answers can include source identifiers to indicate the retrieved information.
-- The system avoids generating unsupported answers when relevant context is insufficient.
-- The `status` returned by the question-answering API is calculated from the answer content and is not a separate database field.
-- The `used_llm` field indicates whether the language model was called during question processing.
+Example paginated response:
+
+```json
+{
+  "count": 25,
+  "next": "http://localhost:8000/api/qa/history/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 12,
+      "question": "How many books can an undergraduate student borrow?",
+      "answer": "An undergraduate student can borrow ...",
+      "status": "answered",
+      "created_at": "2026-11-18T10:30:00Z"
+    }
+  ]
+}
+```
+
+The history detail endpoint includes the `sources` field in addition to the fields returned by the list endpoint.
+
+---
+
+## ✅ Validation Rules
+
+### Document Upload and Update
+
+- Only `.docx` files are accepted.
+- The maximum file size is 10 MB.
+- Empty files are rejected.
+- The document title is required and cannot contain only whitespace.
+- A replacement file is processed again before the update is considered successful.
+
+### Question Submission
+
+- The `question` field is required.
+- Leading and trailing whitespace is removed.
+- The maximum question length is 5,000 characters.
+- If `document_id` is provided, it must be a valid ID of an existing document.
+
+---
+
+## ⚠️ HTTP Status Codes
+
+| Status Code | Meaning | Common Usage |
+|---|---|---|
+| `200 OK` | Request successful | Retrieving or updating a resource |
+| `201 Created` | Resource created | Successful document upload |
+| `204 No Content` | Request successful without response body | Successful document deletion |
+| `400 Bad Request` | Invalid request | Validation errors or invalid question input |
+| `404 Not Found` | Resource not found | Requested document or history record does not exist |
+| `422 Unprocessable Entity` | Processing failed | Replacement document could not be processed; previous document state is restored |
+| `503 Service Unavailable` | Service unavailable | LLM configuration or generation failure |
+
+The exact response depends on the endpoint and the type of error.
+
+---
+
+## 📚 Interactive API Documentation
+
+The project provides three API documentation interfaces:
+
+| Interface | URL | Purpose |
+|---|---|---|
+| Swagger UI | `/api/docs/` | Interactive API testing |
+| ReDoc | `/api/redoc/` | Structured API reference |
+| OpenAPI Schema | `/api/schema/` | Machine-readable API specification |
+
+Open the following URLs after starting the application:
+
+- Swagger: `http://localhost:8000/api/docs/`
+- ReDoc: `http://localhost:8000/api/redoc/`
+- OpenAPI Schema: `http://localhost:8000/api/schema/`
+
+---
+
+## 🔐 Authentication
+
+The current project does not implement API authentication or user authorization. The API endpoints are publicly accessible in the development configuration.
+
+This behavior is intended for the current project scope and should not be considered a production-ready security configuration.
